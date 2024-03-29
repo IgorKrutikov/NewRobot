@@ -50,7 +50,7 @@ public class MainApplicationFrame extends JFrame
     private void closeApplicationConfirm() {
         int res = JOptionPane.showConfirmDialog(null, "Выйти из программы?", "Выход", JOptionPane.YES_NO_OPTION);
         if (res == JOptionPane.YES_OPTION) {
-            this.dispose();
+            System.exit(0);
         }
     }
 
