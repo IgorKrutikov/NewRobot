@@ -8,24 +8,22 @@ import java.util.Properties;
 import java.util.function.Function;
 
 public class Saver {
-    private final File configDir;
-    private final File fileName;
     private final File absFilePath;
     private final Properties property = new Properties();
 
     public Saver(String filename) {
 
-        this.configDir = new File(System.getProperty("user.home") + File.separator + "Robots");
+        File configDir = new File(System.getProperty("user.home") + File.separator + "Robots");
 
-        this.fileName = new File(filename);
+        File fileName = new File(filename);
 
-        this.absFilePath = new File(this.configDir + File.separator + this.fileName);
+        this.absFilePath = new File(configDir + File.separator + fileName);
 
         if (!absFilePath.exists()){
             try {
-                boolean res = absFilePath.createNewFile();
+                absFilePath.createNewFile();
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
         }
     }
@@ -82,13 +80,13 @@ public class Saver {
         container.setLocation(x, y);
 
         if (container instanceof JInternalFrame frame){
-            Boolean isMaximum = Boolean.parseBoolean( property.getProperty(wrap.apply("isMaximum")));
-            Boolean isIcon = Boolean.parseBoolean(property.getProperty(wrap.apply("isIcon")));
+            boolean isMaximum = Boolean.parseBoolean( property.getProperty(wrap.apply("isMaximum")));
+            boolean isIcon = Boolean.parseBoolean(property.getProperty(wrap.apply("isIcon")));
             try {
                 frame.setMaximum(isMaximum);
                 frame.setIcon(isIcon);
             } catch (PropertyVetoException e) {
-                throw new RuntimeException(e);
+                e.printStackTrace();
             }
         }
 
