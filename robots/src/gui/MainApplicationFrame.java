@@ -68,10 +68,15 @@ public class MainApplicationFrame extends JFrame
     private void closeApplicationConfirm() {
         int res = JOptionPane.showConfirmDialog(null, "Выйти из программы?", "Выход", JOptionPane.YES_NO_OPTION);
         if (res == JOptionPane.YES_OPTION) {
+
             saver.save(gameWindow, "GameWindow");
             saver.save(logWindow, "LogWindow");
             saver.flush();
-            System.exit(0);
+
+            this.gameWindow.dispose();
+            this.logWindow.dispose();
+            this.dispose();
+
         }
     }
 
