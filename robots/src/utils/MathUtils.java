@@ -23,7 +23,7 @@ public class MathUtils {
     {
         if (value < min)
             return min;
-        if (value > max)
+        else if (value > max)
             return max;
         return value;
     }

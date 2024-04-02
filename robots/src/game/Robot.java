@@ -21,10 +21,11 @@ public class Robot {
         return m_robotDirection;
     }
 
-    public void moveRobot(double velocity, double angularVelocity, double duration)
+    public void moveRobot(double velocity, double angularVelocity, double duration, double xLimit, double yLimit)
     {
         velocity = MathUtils.applyLimits(velocity, 0, maxVelocity);
         angularVelocity = MathUtils.applyLimits(angularVelocity, -maxAngularVelocity, maxAngularVelocity);
+
         double newX = m_robotPositionX + velocity / angularVelocity *
                 (Math.sin(m_robotDirection  + angularVelocity * duration) -
                         Math.sin(m_robotDirection));
@@ -32,6 +33,7 @@ public class Robot {
         {
             newX = m_robotPositionX + velocity * duration * Math.cos(m_robotDirection);
         }
+
         double newY = m_robotPositionY - velocity / angularVelocity *
                 (Math.cos(m_robotDirection  + angularVelocity * duration) -
                         Math.cos(m_robotDirection));
@@ -39,9 +41,9 @@ public class Robot {
         {
             newY = m_robotPositionY + velocity * duration * Math.sin(m_robotDirection);
         }
-        m_robotPositionX = newX;
-        m_robotPositionY = newY;
-        double newDirection = MathUtils.asNormalizedRadians(m_robotDirection + angularVelocity * duration);
-        m_robotDirection = newDirection;
+
+        m_robotPositionX = MathUtils.applyLimits(newX, 0, xLimit);
+        m_robotPositionY = MathUtils.applyLimits(newY, 0, yLimit);
+        m_robotDirection = MathUtils.asNormalizedRadians(m_robotDirection + angularVelocity * duration);
     }
 }

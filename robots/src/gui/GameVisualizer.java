@@ -89,8 +89,9 @@ public class GameVisualizer extends JPanel
         {
             angularVelocity = -game.Robot.maxAngularVelocity;
         }
-        
-        this.robot.moveRobot(velocity, angularVelocity, 10);
+
+
+        this.robot.moveRobot(velocity, angularVelocity, 10, this.getWidth(), this.getHeight());
     }
 
     
@@ -98,7 +99,8 @@ public class GameVisualizer extends JPanel
     public void paint(Graphics g)
     {
         super.paint(g);
-        Graphics2D g2d = (Graphics2D)g; 
+        Graphics2D g2d = (Graphics2D)g;
+
         drawRobot(g2d, MathUtils.round(robot.getM_robotPositionX()), MathUtils.round(robot.getM_robotPositionY()), robot.getM_robotDirection());
         drawTarget(g2d, target.getM_targetPositionX(), target.getM_targetPositionY());
     }
@@ -131,12 +133,13 @@ public class GameVisualizer extends JPanel
     
     private void drawTarget(Graphics2D g, int x, int y)
     {
-        AffineTransform t = AffineTransform.getRotateInstance(0, 0, 0); 
+        AffineTransform t = AffineTransform.getRotateInstance(0, 0, 0);
         g.setTransform(t);
         g.setColor(Color.GREEN);
         fillOval(g, x, y, 5, 5);
         g.setColor(Color.BLACK);
         drawOval(g, x, y, 5, 5);
+
     }
 
     public void dropTimerSchedule(){
