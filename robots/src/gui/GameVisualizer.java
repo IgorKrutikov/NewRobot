@@ -23,8 +23,7 @@ public class GameVisualizer extends JPanel
     
     private static Timer initTimer() 
     {
-        Timer timer = new Timer("events generator", true);
-        return timer;
+        return new Timer("events generator", true);
     }
     
     public GameVisualizer() 
@@ -101,8 +100,8 @@ public class GameVisualizer extends JPanel
         super.paint(g);
         Graphics2D g2d = (Graphics2D)g;
 
-        drawRobot(g2d, MathUtils.round(robot.getM_robotPositionX()), MathUtils.round(robot.getM_robotPositionY()), robot.getM_robotDirection());
-        drawTarget(g2d, target.getM_targetPositionX(), target.getM_targetPositionY());
+        drawRobot(g2d, robot);
+        drawTarget(g2d, target);
     }
     
     private static void fillOval(Graphics g, int centerX, int centerY, int diam1, int diam2)
@@ -115,24 +114,29 @@ public class GameVisualizer extends JPanel
         g.drawOval(centerX - diam1 / 2, centerY - diam2 / 2, diam1, diam2);
     }
     
-    private void drawRobot(Graphics2D g, int x, int y, double direction)
+    private static void drawRobot(Graphics2D g, game.Robot robot)
     {
-        int robotCenterX = MathUtils.round(robot.getM_robotPositionX());
-        int robotCenterY = MathUtils.round(robot.getM_robotPositionY());
-        AffineTransform t = AffineTransform.getRotateInstance(direction, robotCenterX, robotCenterY); 
+        int direction = MathUtils.round(robot.getM_robotDirection());
+        int x = MathUtils.round(robot.getM_robotPositionX());
+        int y = MathUtils.round(robot.getM_robotPositionY());
+
+        AffineTransform t = AffineTransform.getRotateInstance(direction, x, y);
         g.setTransform(t);
         g.setColor(Color.MAGENTA);
-        fillOval(g, robotCenterX, robotCenterY, 30, 10);
+        fillOval(g, x, y, 30, 10);
         g.setColor(Color.BLACK);
-        drawOval(g, robotCenterX, robotCenterY, 30, 10);
+        drawOval(g, x, y, 30, 10);
         g.setColor(Color.WHITE);
-        fillOval(g, robotCenterX  + 10, robotCenterY, 5, 5);
+        fillOval(g, x  + 10, y, 5, 5);
         g.setColor(Color.BLACK);
-        drawOval(g, robotCenterX  + 10, robotCenterY, 5, 5);
+        drawOval(g, x  + 10, y, 5, 5);
     }
     
-    private void drawTarget(Graphics2D g, int x, int y)
+    private static void drawTarget(Graphics2D g, game.Target target)
     {
+        int x = target.getM_targetPositionX();
+        int y = target.getM_targetPositionY();
+
         AffineTransform t = AffineTransform.getRotateInstance(0, 0, 0);
         g.setTransform(t);
         g.setColor(Color.GREEN);
