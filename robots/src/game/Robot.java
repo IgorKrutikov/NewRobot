@@ -2,12 +2,16 @@ package game;
 
 import utils.MathUtils;
 
-public class Robot {
+import java.util.Observable;
+
+public class Robot extends Observable {
     private volatile double m_robotPositionX = 100;
     private volatile double m_robotPositionY = 100;
     private volatile double m_robotDirection = 0;
     public static final double maxVelocity = 0.1;
     public static final double maxAngularVelocity = 0.001;
+
+    public static final String ROBOT_CHANGE_POSITION_SIGNAL = "ROBOT CHANGED POSITION";
 
     public double getM_robotPositionX(){
         return m_robotPositionX;
@@ -44,6 +48,11 @@ public class Robot {
 
         m_robotPositionX = MathUtils.applyLimits(newX, 0, xLimit);
         m_robotPositionY = MathUtils.applyLimits(newY, 0, yLimit);
-        m_robotDirection = MathUtils.asNormalizedRadians(m_robotDirection + angularVelocity * duration);
+        double newDirection = MathUtils.asNormalizedRadians(m_robotDirection + angularVelocity * duration);
+        m_robotDirection = newDirection;
+
+        this.setChanged();
+        this.notifyObservers(ROBOT_CHANGE_POSITION_SIGNAL);
+        this.clearChanged();
     }
 }

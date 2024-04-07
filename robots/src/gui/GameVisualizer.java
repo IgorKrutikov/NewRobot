@@ -7,35 +7,31 @@ import java.awt.Graphics2D;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import javax.swing.JPanel;
 
-import game.Robot;
 import utils.MathUtils;
 
-public class GameVisualizer extends JPanel
+public class GameVisualizer extends JPanel implements Observer
 {
     private final Timer m_timer = initTimer();
-    private final game.Target target = new game.Target();
-    private final game.Robot robot = new Robot();
+    private final game.Target target;
+    private final game.Robot robot;
     
     private static Timer initTimer() 
     {
         return new Timer("events generator", true);
     }
     
-    public GameVisualizer() 
+    public GameVisualizer(game.Robot robot, game.Target target)
     {
-        m_timer.schedule(new TimerTask()
-        {
-            @Override
-            public void run()
-            {
-                onRedrawEvent();
-            }
-        }, 0, 50);
+        this.robot = robot;
+        this.target = target;
+
         m_timer.schedule(new TimerTask()
         {
             @Override
@@ -53,6 +49,8 @@ public class GameVisualizer extends JPanel
                 repaint();
             }
         });
+
+        this.robot.addObserver(this);
         setDoubleBuffered(true);
     }
     
@@ -116,7 +114,7 @@ public class GameVisualizer extends JPanel
     
     private static void drawRobot(Graphics2D g, game.Robot robot)
     {
-        int direction = MathUtils.round(robot.getM_robotDirection());
+        double direction = robot.getM_robotDirection();
         int x = MathUtils.round(robot.getM_robotPositionX());
         int y = MathUtils.round(robot.getM_robotPositionY());
 
@@ -137,7 +135,7 @@ public class GameVisualizer extends JPanel
         int x = target.getM_targetPositionX();
         int y = target.getM_targetPositionY();
 
-        AffineTransform t = AffineTransform.getRotateInstance(0, 0, 0);
+        AffineTransform t = new AffineTransform();
         g.setTransform(t);
         g.setColor(Color.GREEN);
         fillOval(g, x, y, 5, 5);
@@ -146,8 +144,10 @@ public class GameVisualizer extends JPanel
 
     }
 
-    public void dropTimerSchedule(){
-        this.m_timer.cancel();
-        this.m_timer.purge();
+    @Override
+    public void update(Observable observable, Object o) {
+        if (o.equals(game.Robot.ROBOT_CHANGE_POSITION_SIGNAL)){
+            onRedrawEvent();
+        }
     }
 }

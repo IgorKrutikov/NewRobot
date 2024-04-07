@@ -1,5 +1,6 @@
 package log;
 
+import java.util.Collections;
 import java.util.concurrent.ConcurrentLinkedDeque;
 
 /**
@@ -82,8 +83,14 @@ public class LogWindowSource
         return m_messages.size();
     }
 
-    public Iterable<LogEntry> getMessages(int count){
-        return m_messages;
+    public Iterable<LogEntry> range(int startFrom, int count)
+    {
+        if (startFrom < 0 || startFrom >= size())
+        {
+            return Collections.emptyList();
+        }
+        int indexTo = Math.min(startFrom + count, m_messages.size());
+        return m_messages.stream().toList().subList(startFrom, indexTo);
     }
 
     public Iterable<LogEntry> all()
