@@ -11,6 +11,7 @@ import javax.swing.*;
 
 import log.Logger;
 
+import Saver.Saver;
 /**
  * Что требуется сделать:
  * 1. Метод создания меню перегружен функционалом и трудно читается. 
@@ -20,6 +21,10 @@ import log.Logger;
 public class MainApplicationFrame extends JFrame
 {
     private final JDesktopPane desktopPane = new JDesktopPane();
+
+    private final Saver saver;
+    private final GameWindow gameWindow;
+    private final LogWindow logWindow;
 
     public MainApplicationFrame() {
         //Make the big window be indented 50 pixels from each edge
@@ -31,9 +36,14 @@ public class MainApplicationFrame extends JFrame
 
         setContentPane(desktopPane);
 
-        addWindow(createLogWindow());
+        this.saver = new Saver("robotsFrames.properties");
 
-        addWindow(new GameWindow() { { setSize(400, 400); } } );
+        logWindow = createLogWindow();
+
+        gameWindow = createGameWindow();
+
+        addWindow(logWindow);
+        addWindow(gameWindow);
 
         setJMenuBar(generateMenuBar());
 
@@ -47,9 +57,20 @@ public class MainApplicationFrame extends JFrame
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
     }
 
+    private GameWindow createGameWindow() {
+        GameWindow gameWindow = new GameWindow();
+        gameWindow.setSize(400, 400);
+
+        saver.fillFrame(gameWindow, "GameWindow");
+        return gameWindow;
+    }
+
     private void closeApplicationConfirm() {
         int res = JOptionPane.showConfirmDialog(null, "Выйти из программы?", "Выход", JOptionPane.YES_NO_OPTION);
         if (res == JOptionPane.YES_OPTION) {
+            saver.save(gameWindow, "GameWindow");
+            saver.save(logWindow, "LogWindow");
+            saver.flush();
             System.exit(0);
         }
     }
@@ -62,6 +83,9 @@ public class MainApplicationFrame extends JFrame
         setMinimumSize(logWindow.getSize());
         logWindow.pack();
         Logger.debug("Протокол работает");
+
+        saver.fillFrame(logWindow,"LogWindow");
+
         return logWindow;
     }
     
