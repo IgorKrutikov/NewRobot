@@ -9,6 +9,8 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.*;
 
+import game.Robot;
+import game.Target;
 import log.Logger;
 
 import Saver.Saver;
@@ -26,6 +28,8 @@ public class MainApplicationFrame extends JFrame
     private final GameWindow gameWindow;
     private final LogWindow logWindow;
 
+    private final PositionWindow positionWindow;
+
     public MainApplicationFrame() {
         //Make the big window be indented 50 pixels from each edge
         //of the screen.
@@ -40,10 +44,16 @@ public class MainApplicationFrame extends JFrame
 
         logWindow = createLogWindow();
 
-        gameWindow = createGameWindow();
+        var robot = new Robot();
+        var target = new Target();
+
+        gameWindow = createGameWindow(robot, target);
+
+        positionWindow = createPositonWindow(robot);
 
         addWindow(logWindow);
         addWindow(gameWindow);
+        addWindow(positionWindow);
 
         setJMenuBar(generateMenuBar());
 
@@ -57,8 +67,17 @@ public class MainApplicationFrame extends JFrame
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
     }
 
-    private GameWindow createGameWindow() {
-        GameWindow gameWindow = new GameWindow();
+    private PositionWindow createPositonWindow(Robot robot) {
+        var posWindow = new PositionWindow(robot);
+        posWindow.setSize(300, 100);
+        posWindow.setLocation(1200, 50);
+        saver.fillFrame(posWindow, "PositionWindow");
+        return posWindow;
+    }
+
+    private GameWindow createGameWindow(Robot robot, Target target) {
+
+        GameWindow gameWindow = new GameWindow(robot, target);
         gameWindow.setSize(400, 400);
 
         saver.fillFrame(gameWindow, "GameWindow");
@@ -66,12 +85,19 @@ public class MainApplicationFrame extends JFrame
     }
 
     private void closeApplicationConfirm() {
-        int res = JOptionPane.showConfirmDialog(null, "Выйти из программы?", "Выход", JOptionPane.YES_NO_OPTION);
+        int res = JOptionPane.showConfirmDialog(this, "Выйти из программы?", "Выход", JOptionPane.YES_NO_OPTION);
         if (res == JOptionPane.YES_OPTION) {
+
             saver.save(gameWindow, "GameWindow");
             saver.save(logWindow, "LogWindow");
+            saver.save(positionWindow, "PositionWindow");
             saver.flush();
-            System.exit(0);
+
+            this.gameWindow.dispose();
+            this.logWindow.dispose();
+            this.positionWindow.dispose();
+            this.dispose();
+
         }
     }
 

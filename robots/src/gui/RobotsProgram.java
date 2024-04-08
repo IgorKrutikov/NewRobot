@@ -7,11 +7,9 @@ import javax.swing.UIManager;
 
 import java.util.Locale;
 
-import Saver.Saver;
-
 public class RobotsProgram
 {
-    public static void main(String[] args) throws java.io.IOException {
+    public static void main(String[] args) {
 
         Locale locale = new Locale("ru", "RU");
         var bundle = java.util.ResourceBundle.getBundle("resources/default_components", locale);
