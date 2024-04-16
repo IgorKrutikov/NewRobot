@@ -88,10 +88,7 @@ public class MainApplicationFrame extends JFrame
         int res = JOptionPane.showConfirmDialog(this, "Выйти из программы?", "Выход", JOptionPane.YES_NO_OPTION);
         if (res == JOptionPane.YES_OPTION) {
 
-            saver.save(gameWindow, "GameWindow");
-            saver.save(logWindow, "LogWindow");
-            saver.save(positionWindow, "PositionWindow");
-            saver.flush();
+            this.saveConfigConfirm();
 
             this.gameWindow.dispose();
             this.logWindow.dispose();
@@ -176,6 +173,20 @@ public class MainApplicationFrame extends JFrame
             | IllegalAccessException | UnsupportedLookAndFeelException e)
         {
             // just ignore
+        }
+    }
+
+    private void saveConfig() {
+        saver.save(gameWindow, "GameWindow");
+        saver.save(logWindow, "LogWindow");
+        saver.save(positionWindow, "PositionWindow");
+        saver.flush();
+    }
+
+    private void saveConfigConfirm(){
+        int res = JOptionPane.showConfirmDialog(this, "Сохранить положение окошек?", "Сохранение", JOptionPane.YES_NO_OPTION);
+        if (res == JOptionPane.YES_OPTION) {
+            saveConfig();
         }
     }
 }
