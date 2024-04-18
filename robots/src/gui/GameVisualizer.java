@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.Toolkit;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Graphics;
@@ -101,7 +102,7 @@ public class GameVisualizer extends JPanel implements Observer
         drawRobot(g2d, robot);
         drawTarget(g2d, target);
     }
-    
+
     private static void fillOval(Graphics g, int centerX, int centerY, int diam1, int diam2)
     {
         g.fillOval(centerX - diam1 / 2, centerY - diam2 / 2, diam1, diam2);
@@ -115,8 +116,8 @@ public class GameVisualizer extends JPanel implements Observer
     private static void drawRobot(Graphics2D g, game.Robot robot)
     {
         double direction = robot.getM_robotDirection();
-        int x = MathUtils.round(robot.getM_robotPositionX());
-        int y = MathUtils.round(robot.getM_robotPositionY());
+        int x = MathUtils.round(getDPICorrectCoordinate(robot.getM_robotPositionX()));
+        int y = MathUtils.round(getDPICorrectCoordinate(robot.getM_robotPositionY()));
 
         AffineTransform t = AffineTransform.getRotateInstance(direction, x, y);
         g.setTransform(t);
@@ -132,10 +133,9 @@ public class GameVisualizer extends JPanel implements Observer
     
     private static void drawTarget(Graphics2D g, game.Target target)
     {
-        int x = target.getM_targetPositionX();
-        int y = target.getM_targetPositionY();
-
-        AffineTransform t = new AffineTransform();
+        int x = MathUtils.round(getDPICorrectCoordinate(target.getM_targetPositionX()));
+        int y = MathUtils.round(getDPICorrectCoordinate(target.getM_targetPositionY()));
+        AffineTransform t = AffineTransform.getRotateInstance(0,0,0);
         g.setTransform(t);
         g.setColor(Color.GREEN);
         fillOval(g, x, y, 5, 5);
@@ -149,5 +149,12 @@ public class GameVisualizer extends JPanel implements Observer
         if (o.equals(game.Robot.ROBOT_CHANGE_POSITION_SIGNAL)){
             onRedrawEvent();
         }
+    }
+
+    private static double getDPICorrectCoordinate(double coordinate){
+        double dpi = Toolkit.getDefaultToolkit().getScreenResolution();
+
+        return coordinate * (dpi+5) / 100;
+
     }
 }

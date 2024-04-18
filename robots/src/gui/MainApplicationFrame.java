@@ -13,7 +13,7 @@ import game.Robot;
 import game.Target;
 import log.Logger;
 
-import Saver.Saver;
+import saver.Saver;
 /**
  * Что требуется сделать:
  * 1. Метод создания меню перегружен функционалом и трудно читается. 
@@ -35,6 +35,7 @@ public class MainApplicationFrame extends JFrame
         //of the screen.
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
         int inset = 50;
         setBounds(inset, inset, screenSize.width  - inset *2,screenSize.height - inset *2);
 
