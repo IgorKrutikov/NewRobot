@@ -1,6 +1,5 @@
 package gui;
 
-import java.awt.Toolkit;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Graphics;
@@ -15,6 +14,7 @@ import java.util.TimerTask;
 
 import javax.swing.JPanel;
 
+import utils.GraphicsUtils;
 import utils.MathUtils;
 
 public class GameVisualizer extends JPanel implements Observer
@@ -102,45 +102,40 @@ public class GameVisualizer extends JPanel implements Observer
         drawRobot(g2d, robot);
         drawTarget(g2d, target);
     }
-
-    private static void fillOval(Graphics g, int centerX, int centerY, int diam1, int diam2)
-    {
-        g.fillOval(centerX - diam1 / 2, centerY - diam2 / 2, diam1, diam2);
-    }
-    
-    private static void drawOval(Graphics g, int centerX, int centerY, int diam1, int diam2)
-    {
-        g.drawOval(centerX - diam1 / 2, centerY - diam2 / 2, diam1, diam2);
-    }
     
     private static void drawRobot(Graphics2D g, game.Robot robot)
     {
         double direction = robot.getM_robotDirection();
-        int x = MathUtils.round(getDPICorrectCoordinate(robot.getM_robotPositionX()));
-        int y = MathUtils.round(getDPICorrectCoordinate(robot.getM_robotPositionY()));
+
+        int x = MathUtils.round(GraphicsUtils.getDPICorrectCoordinate(robot.getM_robotPositionX()));
+        int y = MathUtils.round(GraphicsUtils.getDPICorrectCoordinate(robot.getM_robotPositionY()));
 
         AffineTransform t = AffineTransform.getRotateInstance(direction, x, y);
         g.setTransform(t);
         g.setColor(Color.MAGENTA);
-        fillOval(g, x, y, 30, 10);
+        GraphicsUtils.fillOval(g, x, y, 30, 10);
         g.setColor(Color.BLACK);
-        drawOval(g, x, y, 30, 10);
+        GraphicsUtils.drawOval(g, x, y, 30, 10);
         g.setColor(Color.WHITE);
-        fillOval(g, x  + 10, y, 5, 5);
+        GraphicsUtils.fillOval(g, x  + 10, y, 5, 5);
         g.setColor(Color.BLACK);
-        drawOval(g, x  + 10, y, 5, 5);
+        GraphicsUtils.drawOval(g, x  + 10, y, 5, 5);
     }
     
     private static void drawTarget(Graphics2D g, game.Target target)
     {
-        int x = MathUtils.round(getDPICorrectCoordinate(target.getM_targetPositionX()));
-        int y = MathUtils.round(getDPICorrectCoordinate(target.getM_targetPositionY()));
+        int x = target.getM_targetPositionX();
+        int y = target.getM_targetPositionY();
+
+        x = MathUtils.round(GraphicsUtils.getDPICorrectCoordinate(x));
+        y = MathUtils.round(GraphicsUtils.getDPICorrectCoordinate(y));
+
         AffineTransform t = AffineTransform.getRotateInstance(0,0,0);
         g.setTransform(t);
         g.setColor(Color.GREEN);
-        fillOval(g, x, y, 5, 5);
+        GraphicsUtils.fillOval(g, x, y, 5, 5);
         g.setColor(Color.BLACK);
-        drawOval(g, x, y, 5, 5);
+        GraphicsUtils.drawOval(g, x, y, 5, 5);
 
     }
 
@@ -149,12 +144,5 @@ public class GameVisualizer extends JPanel implements Observer
         if (o.equals(game.Robot.ROBOT_CHANGE_POSITION_SIGNAL)){
             onRedrawEvent();
         }
-    }
-
-    private static double getDPICorrectCoordinate(double coordinate){
-        double dpi = Toolkit.getDefaultToolkit().getScreenResolution();
-
-        return coordinate * (dpi+5) / 100;
-
     }
 }
