@@ -14,31 +14,31 @@ import java.util.TimerTask;
 
 import javax.swing.JPanel;
 
+import game.GameLogic;
 import utils.GraphicsUtils;
 import utils.MathUtils;
 
 public class GameVisualizer extends JPanel implements Observer
 {
     private final Timer m_timer = initTimer();
-    private final game.Target target;
-    private final game.Robot robot;
+    private final game.GameLogic gameLogic;
     
     private static Timer initTimer() 
     {
         return new Timer("events generator", true);
     }
     
-    public GameVisualizer(game.Robot robot, game.Target target)
+    public GameVisualizer(GameLogic gameLogic)
     {
-        this.robot = robot;
-        this.target = target;
+        this.gameLogic = gameLogic;
+        this.gameLogic.addObserver(this);
 
         m_timer.schedule(new TimerTask()
         {
             @Override
             public void run()
             {
-                onModelUpdateEvent();
+                gameLogic.onModelUpdateEvent(getWidth(), getHeight());
             }
         }, 0, 10);
         addMouseListener(new MouseAdapter()
@@ -46,12 +46,10 @@ public class GameVisualizer extends JPanel implements Observer
             @Override
             public void mouseClicked(MouseEvent e)
             {
-                target.setTargetPosition(e.getPoint());
+                gameLogic.setTargetPosition(e.getPoint());
                 repaint();
             }
         });
-
-        this.robot.addObserver(this);
         setDoubleBuffered(true);
     }
     
@@ -60,55 +58,22 @@ public class GameVisualizer extends JPanel implements Observer
         EventQueue.invokeLater(this::repaint);
     }
     
-    protected void onModelUpdateEvent()
-    {
-        int targetX = target.getM_targetPositionX();
-        int targetY = target.getM_targetPositionY();
-
-        double robotX = robot.getM_robotPositionX();
-        double robotY = robot.getM_robotPositionY();
-        double m_robotDirection = robot.getM_robotDirection();
-
-        double distance = MathUtils.distance(targetX, targetY,
-            robotX, robotY);
-        if (distance < 0.5)
-        {
-            return;
-        }
-        double velocity = game.Robot.maxVelocity;
-        double angleToTarget = MathUtils.angleTo(robotX, robotY, targetX, targetY);
-
-        double angularVelocity = 0;
-        if (angleToTarget > m_robotDirection)
-        {
-            angularVelocity = game.Robot.maxAngularVelocity;
-        }
-        if (angleToTarget < m_robotDirection)
-        {
-            angularVelocity = -game.Robot.maxAngularVelocity;
-        }
-
-
-        this.robot.moveRobot(velocity, angularVelocity, 10, this.getWidth(), this.getHeight());
-    }
-
-    
     @Override
     public void paint(Graphics g)
     {
         super.paint(g);
         Graphics2D g2d = (Graphics2D)g;
 
-        drawRobot(g2d, robot);
-        drawTarget(g2d, target);
+        drawRobot(g2d, gameLogic);
+        drawTarget(g2d, gameLogic);
     }
     
-    private static void drawRobot(Graphics2D g, game.Robot robot)
+    private static void drawRobot(Graphics2D g, GameLogic gameLogic)
     {
-        double direction = robot.getM_robotDirection();
+        double direction = gameLogic.getM_robotDirection();
 
-        int x = MathUtils.round(GraphicsUtils.getDPICorrectCoordinate(robot.getM_robotPositionX()));
-        int y = MathUtils.round(GraphicsUtils.getDPICorrectCoordinate(robot.getM_robotPositionY()));
+        int x = MathUtils.round(GraphicsUtils.getDPICorrectCoordinate(gameLogic.getM_robotPositionX()));
+        int y = MathUtils.round(GraphicsUtils.getDPICorrectCoordinate(gameLogic.getM_robotPositionY()));
 
         AffineTransform t = AffineTransform.getRotateInstance(direction, x, y);
         g.setTransform(t);
@@ -122,10 +87,10 @@ public class GameVisualizer extends JPanel implements Observer
         GraphicsUtils.drawOval(g, x  + 10, y, 5, 5);
     }
     
-    private static void drawTarget(Graphics2D g, game.Target target)
+    private static void drawTarget(Graphics2D g, GameLogic gameLogic)
     {
-        int x = target.getM_targetPositionX();
-        int y = target.getM_targetPositionY();
+        int x = gameLogic.getM_targetPositionX();
+        int y = gameLogic.getM_targetPositionY();
 
         x = MathUtils.round(GraphicsUtils.getDPICorrectCoordinate(x));
         y = MathUtils.round(GraphicsUtils.getDPICorrectCoordinate(y));
@@ -141,7 +106,7 @@ public class GameVisualizer extends JPanel implements Observer
 
     @Override
     public void update(Observable observable, Object o) {
-        if (o.equals(game.Robot.ROBOT_CHANGE_POSITION_SIGNAL)){
+        if (o.equals(game.GameLogic.ROBOT_CHANGE_POSITION_SIGNAL)){
             onRedrawEvent();
         }
     }

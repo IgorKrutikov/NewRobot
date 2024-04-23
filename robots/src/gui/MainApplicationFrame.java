@@ -9,6 +9,7 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.*;
 
+import game.GameLogic;
 import game.Robot;
 import game.Target;
 import log.Logger;
@@ -45,12 +46,10 @@ public class MainApplicationFrame extends JFrame
 
         logWindow = createLogWindow();
 
-        var robot = new Robot();
-        var target = new Target();
+        var gameLogic = new GameLogic();
+        gameWindow = createGameWindow(gameLogic);
 
-        gameWindow = createGameWindow(robot, target);
-
-        positionWindow = createPositonWindow(robot);
+        positionWindow = createPositonWindow(gameLogic);
 
         addWindow(logWindow);
         addWindow(gameWindow);
@@ -68,17 +67,17 @@ public class MainApplicationFrame extends JFrame
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
     }
 
-    private PositionWindow createPositonWindow(Robot robot) {
-        var posWindow = new PositionWindow(robot);
+    private PositionWindow createPositonWindow(GameLogic gameLogic) {
+        var posWindow = new PositionWindow(gameLogic);
         posWindow.setSize(300, 100);
         posWindow.setLocation(1200, 50);
         saver.fillFrame(posWindow, "PositionWindow");
         return posWindow;
     }
 
-    private GameWindow createGameWindow(Robot robot, Target target) {
+    private GameWindow createGameWindow(GameLogic gameLogic) {
 
-        GameWindow gameWindow = new GameWindow(robot, target);
+        GameWindow gameWindow = new GameWindow(gameLogic);
         gameWindow.setSize(400, 400);
 
         saver.fillFrame(gameWindow, "GameWindow");
