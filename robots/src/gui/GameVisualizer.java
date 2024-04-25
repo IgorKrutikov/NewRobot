@@ -1,9 +1,8 @@
 package gui;
 
-import java.awt.Color;
-import java.awt.EventQueue;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
@@ -33,14 +32,24 @@ public class GameVisualizer extends JPanel implements Observer
         this.gameLogic = gameLogic;
         this.gameLogic.addObserver(this);
 
+        Timer m_timer = initTimer();
         m_timer.schedule(new TimerTask()
         {
             @Override
             public void run()
             {
-                gameLogic.onModelUpdateEvent(getWidth(), getHeight());
+                onRedrawEvent();
             }
         }, 0, 10);
+        m_timer.schedule(new TimerTask()
+        {
+            @Override
+            public void run()
+            {
+                gameLogic.onModelUpdateEvent();
+            }
+        }, 0, 10);
+
         addMouseListener(new MouseAdapter()
         {
             @Override
@@ -50,6 +59,19 @@ public class GameVisualizer extends JPanel implements Observer
                 repaint();
             }
         });
+
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                super.componentResized(e);
+                Component component = e.getComponent();
+
+                int newWidth = component.getBounds().width;
+                int newHeight = component.getBounds().height;
+                gameLogic.correctLimits(newWidth, newHeight);
+            }
+        });
+
         setDoubleBuffered(true);
     }
     

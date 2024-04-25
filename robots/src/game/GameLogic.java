@@ -10,12 +10,15 @@ public class GameLogic extends Observable {
     private final Robot robot;
     private final Target target;
 
+    private int widthBound = 400;
+    private int heightBound = 400;
+
     public GameLogic() {
         this.robot = new Robot();
         this.target = new Target();
     }
-    
-    public void onModelUpdateEvent(int widthBound, int heightBound)
+
+    public void onModelUpdateEvent()
     {
         int targetX = target.getM_targetPositionX();
         int targetY = target.getM_targetPositionY();
@@ -73,5 +76,11 @@ public class GameLogic extends Observable {
 
     public double getM_robotDirection() {
         return robot.getM_robotDirection();
+    }
+
+    public void correctLimits(int newWidth, int newHeight) {
+        target.correctPosition(newWidth, newHeight);
+        widthBound = newWidth;
+        heightBound = newHeight;
     }
 }

@@ -81,6 +81,7 @@ public class MainApplicationFrame extends JFrame
         gameWindow.setSize(400, 400);
 
         saver.fillFrame(gameWindow, "GameWindow");
+        gameLogic.correctLimits(gameWindow.getWidth(), gameWindow.getHeight());
         return gameWindow;
     }
 

@@ -9,7 +9,7 @@ public class Robot {
     private volatile double m_robotPositionY = 100;
     private volatile double m_robotDirection = 0;
     public static final double maxVelocity = 0.1;
-    public static final double maxAngularVelocity = 0.001;
+    public static final double maxAngularVelocity = 0.005;
 
     public double getM_robotPositionX(){
         return m_robotPositionX;

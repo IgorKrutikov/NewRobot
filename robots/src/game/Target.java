@@ -1,5 +1,7 @@
 package game;
 
+import utils.MathUtils;
+
 import java.awt.*;
 
 public class Target {
@@ -19,5 +21,12 @@ public class Target {
 
     public int getM_targetPositionY(){
         return m_targetPositionY;
+    }
+
+    public void correctPosition(int width, int height){
+        int newX = MathUtils.round(MathUtils.applyLimits(m_targetPositionX, 0, width));
+        m_targetPositionX = newX;
+        int newY =  MathUtils.round(MathUtils.applyLimits(m_targetPositionY, 0, height));
+        m_targetPositionY = newY;
     }
 }
