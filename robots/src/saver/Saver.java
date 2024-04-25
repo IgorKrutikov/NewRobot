@@ -1,4 +1,4 @@
-package Saver;
+package saver;
 
 import javax.swing.*;
 import java.awt.*;

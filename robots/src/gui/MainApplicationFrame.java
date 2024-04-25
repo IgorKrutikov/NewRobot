@@ -9,11 +9,12 @@ import java.awt.event.WindowEvent;
 
 import javax.swing.*;
 
+import game.GameLogic;
 import game.Robot;
 import game.Target;
 import log.Logger;
 
-import Saver.Saver;
+import saver.Saver;
 /**
  * Что требуется сделать:
  * 1. Метод создания меню перегружен функционалом и трудно читается. 
@@ -35,6 +36,7 @@ public class MainApplicationFrame extends JFrame
         //of the screen.
 
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+
         int inset = 50;
         setBounds(inset, inset, screenSize.width  - inset *2,screenSize.height - inset *2);
 
@@ -44,12 +46,10 @@ public class MainApplicationFrame extends JFrame
 
         logWindow = createLogWindow();
 
-        var robot = new Robot();
-        var target = new Target();
+        var gameLogic = new GameLogic();
+        gameWindow = createGameWindow(gameLogic);
 
-        gameWindow = createGameWindow(robot, target);
-
-        positionWindow = createPositonWindow(robot);
+        positionWindow = createPositonWindow(gameLogic);
 
         addWindow(logWindow);
         addWindow(gameWindow);
@@ -67,20 +67,21 @@ public class MainApplicationFrame extends JFrame
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
     }
 
-    private PositionWindow createPositonWindow(Robot robot) {
-        var posWindow = new PositionWindow(robot);
+    private PositionWindow createPositonWindow(GameLogic gameLogic) {
+        var posWindow = new PositionWindow(gameLogic);
         posWindow.setSize(300, 100);
         posWindow.setLocation(1200, 50);
         saver.fillFrame(posWindow, "PositionWindow");
         return posWindow;
     }
 
-    private GameWindow createGameWindow(Robot robot, Target target) {
+    private GameWindow createGameWindow(GameLogic gameLogic) {
 
-        GameWindow gameWindow = new GameWindow(robot, target);
+        GameWindow gameWindow = new GameWindow(gameLogic);
         gameWindow.setSize(400, 400);
 
         saver.fillFrame(gameWindow, "GameWindow");
+        gameLogic.correctLimits(gameWindow.getWidth(), gameWindow.getHeight());
         return gameWindow;
     }
 
@@ -88,10 +89,7 @@ public class MainApplicationFrame extends JFrame
         int res = JOptionPane.showConfirmDialog(this, "Выйти из программы?", "Выход", JOptionPane.YES_NO_OPTION);
         if (res == JOptionPane.YES_OPTION) {
 
-            saver.save(gameWindow, "GameWindow");
-            saver.save(logWindow, "LogWindow");
-            saver.save(positionWindow, "PositionWindow");
-            saver.flush();
+            this.saveConfigConfirm();
 
             this.gameWindow.dispose();
             this.logWindow.dispose();
@@ -176,6 +174,20 @@ public class MainApplicationFrame extends JFrame
             | IllegalAccessException | UnsupportedLookAndFeelException e)
         {
             // just ignore
+        }
+    }
+
+    private void saveConfig() {
+        saver.save(gameWindow, "GameWindow");
+        saver.save(logWindow, "LogWindow");
+        saver.save(positionWindow, "PositionWindow");
+        saver.flush();
+    }
+
+    private void saveConfigConfirm(){
+        int res = JOptionPane.showConfirmDialog(this, "Сохранить положение окошек?", "Сохранение", JOptionPane.YES_NO_OPTION);
+        if (res == JOptionPane.YES_OPTION) {
+            saveConfig();
         }
     }
 }
