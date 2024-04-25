@@ -19,7 +19,6 @@ import utils.MathUtils;
 
 public class GameVisualizer extends JPanel implements Observer
 {
-    private final Timer m_timer = initTimer();
     private final game.GameLogic gameLogic;
     
     private static Timer initTimer() 
@@ -33,14 +32,7 @@ public class GameVisualizer extends JPanel implements Observer
         this.gameLogic.addObserver(this);
 
         Timer m_timer = initTimer();
-        m_timer.schedule(new TimerTask()
-        {
-            @Override
-            public void run()
-            {
-                onRedrawEvent();
-            }
-        }, 0, 10);
+
         m_timer.schedule(new TimerTask()
         {
             @Override
